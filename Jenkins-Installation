@@ -1,0 +1,37 @@
+- hosts: localhost
+  become: true
+  tasks: 
+  - name: installing java
+    yum:
+    - name: java-11-openjdk-devel
+      state: present 
+  - name: download jenkins repo 
+    get_url:
+      url:  https://pkg.jenkins.io/redhat-stable/jenkins.repo
+      dest: /etc/yum.repos.d/jenkins.repo
+  - name: import rpm key
+    rpm_key:
+      key: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+      state: present 
+  - name: install jenkins 
+    yum:
+      name: jenkins 
+      state: present 
+  - name: start jenkins 
+    service: 
+      name: jenkins 
+      state: restarted 
+  - name: enable jenkins on bootstrap
+    systemd:
+      name: jenkins 
+      enabled: true
+  - name: sleep for 30 seconds
+    wait_for:
+      delay: 30
+      port: 8080
+  - name: get init admin password
+    shell: cat /var/lib/jenkins/secrets/intialadminpassword
+    register: jenkinspassword 
+  - name: prnt jenkins password
+    debug:
+      var: jenkinspassword.stdo
