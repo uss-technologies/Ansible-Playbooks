@@ -34,4 +34,4 @@
     register: jenkinspassword 
   - name: prnt jenkins password
     debug:
-      var: jenkinspassword.stdo
+      var: jenkinspassword.stdout
