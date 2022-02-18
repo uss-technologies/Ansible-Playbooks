@@ -1,0 +1,18 @@
+- hosts: localhost
+  become: true
+  tasks:
+  - name: find the file
+    stat:
+      path: /tmp/abc.txt
+    register: file_name
+  - name: if file exist
+    debug:
+      msg: "the file exists"
+    when: file_name.stat.exists
+  - name: create file
+    file:
+      path: /tmp/abc.txt
+      state: touch
+    when: not file_name.stat.exists
+  - name: add mobile number into file
+    shell: echo "9955354226" > /tmp/abc.txt
